@@ -113,11 +113,11 @@
 /* Include everything */
 #endif
 
-#if defined(_UWIN)
+#if defined(_WIN64)
 #   define HAVE_STRUCT_TIMESPEC 1
 #   define HAVE_SIGNAL_H        1
 #   undef HAVE_PTW32_CONFIG_H
-#   pragma comment(lib, "pthread")
+//#   pragma comment(lib, "pthread")
 #endif
 
 /*
