@@ -400,7 +400,7 @@ void scrypt_core(uint32_t *X, uint32_t *V, int N);
 #elif defined(USE_ASM) && defined(__arm__) && defined(__APCS_32__)
 
 void scrypt_core(uint32_t *X, uint32_t *V, int N);
-#if defined(__ARM_NEON__)
+#if defined(__ARM_NEON)
 #undef HAVE_SHA256_4WAY
 #define SCRYPT_MAX_WAYS 3
 #define HAVE_SCRYPT_3WAY 1
