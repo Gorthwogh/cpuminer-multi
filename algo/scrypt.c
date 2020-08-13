@@ -408,6 +408,7 @@ void scrypt_core(uint32_t *X, uint32_t *V, int N);
 void scrypt_core_3way(uint32_t *X, uint32_t *V, int N);
 #endif
 
+#else
 
 static inline void xor_salsa8(uint32_t B[16], const uint32_t Bx[16])
 {
