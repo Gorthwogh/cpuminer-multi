@@ -1875,6 +1875,7 @@ extern int scanhash_scrypt(int thr_id, struct work *work, uint32_t max_nonce, ui
 	const uint32_t Htarg = ptarget[7];
 	int throughput = scrypt_best_throughput();
 	int i;
+	applog(LOG_NOTICE, "throughput: %lu", throughput);
 	
 #ifdef HAVE_SHA256_4WAY
 	if (sha256_use_4way())
