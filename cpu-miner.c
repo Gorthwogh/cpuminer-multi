@@ -1088,13 +1088,13 @@ static int share_result(int result, struct work *work, const char *reason)
 	case ALGO_CRYPTONIGHT:
 	case ALGO_PLUCK:
 	case ALGO_SCRYPTJANE:
-		sprintf(s, hashrate >= 1e6 ? "%.0f" : "%.2f", hashrate);
+		sprintf(s, hashrate >= 1e6 ? "%.0f" : "%.5f", hashrate);
 		applog(LOG_NOTICE, "accepted: %lu/%lu (%s), %s H/s %s",
 			accepted_count, accepted_count + rejected_count,
 			suppl, s, flag);
 		break;
 	default:
-		sprintf(s, hashrate >= 1e6 ? "%.0f" : "%.2f", hashrate / 1000.0);
+		sprintf(s, hashrate >= 1e6 ? "%.0f" : "%.5f", hashrate / 1000.0);
 		applog(LOG_NOTICE, "accepted: %lu/%lu (%s), %s kH/s %s",
 			accepted_count, accepted_count + rejected_count,
 			suppl, s, flag);
@@ -2477,10 +2477,10 @@ static void *miner_thread(void *userdata)
 			case ALGO_CRYPTONIGHT:
 			case ALGO_PLUCK:
 			case ALGO_SCRYPTJANE:
-				applog(LOG_INFO, "CPU #%d: %.2f H/s", thr_id, thr_hashrates[thr_id]);
+				applog(LOG_INFO, "CPU #%d: %.5f H/s", thr_id, thr_hashrates[thr_id]);
 				break;
 			default:
-				sprintf(s, thr_hashrates[thr_id] >= 1e6 ? "%.0f" : "%.2f",
+				sprintf(s, thr_hashrates[thr_id] >= 1e6 ? "%.0f" : "%.5f",
 						thr_hashrates[thr_id] / 1e3);
 				applog(LOG_INFO, "CPU #%d: %s kH/s", thr_id, s);
 				break;
@@ -2497,11 +2497,11 @@ static void *miner_thread(void *userdata)
 				case ALGO_CRYPTONIGHT:
 				case ALGO_AXIOM:
 				case ALGO_SCRYPTJANE:
-					sprintf(s, "%.3f", hashrate);
+					sprintf(s, "%.5f", hashrate);
 					applog(LOG_NOTICE, "Total: %s H/s", s);
 					break;
 				default:
-					sprintf(s, hashrate >= 1e6 ? "%.0f" : "%.2f", hashrate / 1000);
+					sprintf(s, hashrate >= 1e6 ? "%.0f" : "%.5f", hashrate / 1000);
 					applog(LOG_NOTICE, "Total: %s kH/s", s);
 					break;
 				}
