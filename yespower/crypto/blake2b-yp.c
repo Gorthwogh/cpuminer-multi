@@ -286,7 +286,7 @@ void pbkdf2_blake2b_yp(const uint8_t * passwd, size_t passwdlen, const uint8_t *
     /* Iterate through the blocks. */
     for (i = 0; i * 32 < dkLen; i++) {
         /* Generate INT(i + 1). */
-        ivec = bswap_32( i+1 );
+        //ivec = bswap_32( i+1 );
 
         /* Compute U_1 = PRF(P, S || INT(i)). */
         memcpy(&hctx, &PShctx, sizeof(hmac_yp_ctx));
