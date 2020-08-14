@@ -141,6 +141,14 @@ enum algos {
 	ALGO_X20R,
 	ALGO_XEVAN,
 	ALGO_YESCRYPT,
+	ALGO_YESPOWER,
+	ALGO_YESPOWERR16,
+	ALGO_CPUPOWER,
+	ALGO_YESPOWERURX,
+	ALGO_YESPOWERSUGAR,
+	ALGO_YESPOWERLITB,
+	ALGO_YESPOWERINTER,
+	ALGO_POWER2B,
 	ALGO_ZR5,
 	ALGO_COUNT
 };
@@ -210,9 +218,26 @@ static const char *algo_names[] = {
 	"x20r",
 	"xevan",
 	"yescrypt",
+	"yespower",
+	"yespowerr16",
+	"cpupower",
+	"yespowerurx",
+	"yespowersugar",
+	"yespowerlitb",
+	"yespowerinter",
+	"power2b",
 	"zr5",
 	"\0"
 };
+
+/*ALGO_YESPOWER,
+ALGO_YESPOWERR16,
+ALGO_CPUPOWER,
+ALGO_YESPOWERURX,
+ALGO_YESPOWERSUGAR,
+ALGO_YESPOWERLITB,
+ALGO_YESPOWERINTER,
+ALGO_POWER2B,*/
 
 bool opt_debug = false;
 bool opt_debug_diff = false;
@@ -1861,6 +1886,7 @@ static void stratum_gen_work(struct stratum_ctx *sctx, struct work *work)
 			case ALGO_NEOSCRYPT:
 			case ALGO_PLUCK:
 			case ALGO_YESCRYPT:
+			case ALGO_YESPOWER:
 				work_set_target(work, sctx->job.diff / (65536.0 * opt_diff_factor));
 				break;
 			case ALGO_ALLIUM:
@@ -2200,6 +2226,9 @@ static void *miner_thread(void *userdata)
 			case ALGO_YESCRYPT:
 				max64 = 0x1ff;
 				break;
+			case ALGO_YESPOWER:
+				max64 = 0xfffLL;
+				break;
 			case ALGO_ALLIUM:
 			case ALGO_LYRA2:
 			case ALGO_LYRA2REV2:
@@ -2461,6 +2490,31 @@ static void *miner_thread(void *userdata)
 		case ALGO_YESCRYPT:
 			rc = scanhash_yescrypt(thr_id, &work, max_nonce, &hashes_done);
 			break;
+		case ALGO_YESPOWER:
+			rc = scanhash_yespower(thr_id, &work, max_nonce, &hashes_done, 1);
+			break;
+		case ALGO_YESPOWERR16:
+			rc = scanhash_yespower(thr_id, &work, max_nonce, &hashes_done, 2);
+			break;
+		case ALGO_CPUPOWER:
+			rc = scanhash_yespower(thr_id, &work, max_nonce, &hashes_done, 3);
+			break;
+		case ALGO_YESPOWERURX:
+			rc = scanhash_yespower(thr_id, &work, max_nonce, &hashes_done, 4);
+			break;
+		case ALGO_YESPOWERSUGAR:
+			rc = scanhash_yespower(thr_id, &work, max_nonce, &hashes_done, 7);
+			break;
+		case ALGO_YESPOWERLITB:
+			rc = scanhash_yespower(thr_id, &work, max_nonce, &hashes_done, 5);
+			break;
+		case ALGO_YESPOWERINTER:
+			rc = scanhash_yespower(thr_id, &work, max_nonce, &hashes_done, 6);
+			break;
+		case ALGO_POWER2B:
+			rc = scanhash_yespower_b2b(thr_id, &work, max_nonce, &hashes_done);
+			break;
+
 		case ALGO_ZR5:
 			rc = scanhash_zr5(thr_id, &work, max_nonce, &hashes_done);
 			break;
@@ -3439,7 +3493,8 @@ static int thread_create(struct thr_info *thr, void* func)
 
 static void show_credits()
 {
-	printf("** " PACKAGE_NAME " " PACKAGE_VERSION " by tpruvot@github **\n");
+	printf("** " PACKAGE_NAME " " PACKAGE_VERSION " by tpruvot@github arm extension by gorthwogh@github **\n");
+	printf("BTC donation address: 1LnxwR565Va3HDc3oXienpD9C9XevjEuTb (gorthwogh)\n\n");
 	printf("BTC donation address: 1FhDPLPpw18X4srecguG3MxJYe4a1JsZnd (tpruvot)\n\n");
 }
 
