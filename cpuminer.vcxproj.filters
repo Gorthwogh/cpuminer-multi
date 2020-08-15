@@ -381,9 +381,6 @@
     <ClCompile Include="yespower\yespower-ref.c">
       <Filter>yespower</Filter>
     </ClCompile>
-    <ClCompile Include="yespower.c">
-      <Filter>algo</Filter>
-    </ClCompile>
     <ClCompile Include="sha3\hmac-sha256-hash.c">
       <Filter>sph</Filter>
     </ClCompile>
@@ -392,6 +389,9 @@
     </ClCompile>
     <ClCompile Include="yespower\crypto\blake2b-yp.c">
       <Filter>yespower\crypto</Filter>
+    </ClCompile>
+    <ClCompile Include="algo\yespower.c">
+      <Filter>algo</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

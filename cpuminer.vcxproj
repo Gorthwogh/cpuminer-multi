@@ -166,6 +166,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="algo\yespower.c" />
     <ClCompile Include="compat\getopt\getopt_long.c" />
     <ClCompile Include="compat\gettimeofday.c" />
     <ClCompile Include="compat\jansson\dump.c" />
@@ -302,7 +303,6 @@
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="yescrypt\yescrypt-opt.c" />
-    <ClCompile Include="yespower.c" />
     <ClCompile Include="yespower\crypto\blake2b-yp.c" />
     <ClCompile Include="yespower\yespower-blake2b.c" />
     <ClCompile Include="yespower\yespower-ref.c" />

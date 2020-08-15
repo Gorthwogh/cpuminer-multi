@@ -83,6 +83,9 @@ int scanhash_yespower(int thr_id, struct work *work, uint32_t max_nonce, uint64_
 			{
 				be32enc(pdata + 19, n);
 				work_set_target_ratio(work, vhash);
+				*hashes_done = n - first_nonce + 1;
+				pdata[19] = n;
+				return true;
 			}
 		endiandata[19] = ++n;
 	} while (n < last_nonce && !work_restart[thr_id].restart);
