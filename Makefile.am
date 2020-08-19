@@ -59,7 +59,7 @@ cpuminer_SOURCES = \
   yescrypt/yescrypt-common.c yescrypt/yescrypt-best.c \
   yescrypt/sha256_Y.c \
   yespower/yespower-opt.c yespower/yespower-blake2b.c \
-  yespower/yespower-platform.c yespower/crypto/blake2b-yp.c \
+  yespower/crypto/blake2b-yp.c \
   algo/allium.c \
   algo/axiom.c \
   algo/bastion.c \
