@@ -95,7 +95,7 @@
 #include <string.h>
 
 //#include "sha3/hmac-sha256-hash.h"
-#include "yescrypt/sha256_y.h"
+#include "yescrypt/sha256_Y.h"
 //#include "sysendian.h"
 
 #include "yespower.h"
