@@ -58,6 +58,13 @@ int yespower_hash(const char *input, char *output, uint32_t len, int thrid, int 
 	//	(yespower_binary_t*)output, thrid);
 }
 
+
+static int pretest(const uint32_t *hash, const uint32_t *target)
+{
+	return hash[7] < target[7];
+}
+
+
 int scanhash_yespower(int thr_id, struct work *work, uint32_t max_nonce, uint64_t *hashes_done, int version)
 {
 	uint32_t _ALIGN(64) vhash[8];
@@ -66,27 +73,30 @@ int scanhash_yespower(int thr_id, struct work *work, uint32_t max_nonce, uint64_
 	uint32_t *ptarget = work->target;
 	const uint32_t first_nonce = pdata[19];
 	const uint32_t last_nonce = max_nonce;
-	uint32_t n = first_nonce;
+	uint32_t n = first_nonce - 1;
 	//const int thr_id = mythr->id;
 
 	for (int k = 0; k < 19; k++)
 		be32enc(&endiandata[k], pdata[k]);
-	endiandata[19] = n;
+	//endiandata[19] = n;
 
 	// do sha256 prehash
-	SHA256_Init(&sha256_prehash_ctx);
-	SHA256_Update(&sha256_prehash_ctx, endiandata, 64);
+	//SHA256_Init(&sha256_prehash_ctx);
+	//SHA256_Update(&sha256_prehash_ctx, endiandata, 64);
 
 	do {
-		if (yespower_hash((char*)endiandata, (char*)vhash, 80, thr_id, version))
-			if unlikely(fulltest(vhash, ptarget) && !opt_benchmark)
-			{
-				be32enc(pdata + 19, n);
-				work_set_target_ratio(work, vhash);
-			}
-		endiandata[19] = ++n;
+		be32enc(&endiandata[19], ++n);
+		yespower_hash((char*)endiandata, (char*)vhash, 80, thr_id, version);
+		if (pretest(vhash, ptarget) && fulltest(vhash, ptarget)) {
+			//be32enc(pdata + 19, n);
+			//work_set_target_ratio(work, vhash);
+			pdata[19] = n;
+			*hashes_done = n - first_nonce + 1;
+			return 1;
+		}
+		//endiandata[19] = ++n;
 	} while (n < last_nonce && !work_restart[thr_id].restart);
-	*hashes_done = n - first_nonce;
+	*hashes_done = n - first_nonce + 1;
 	pdata[19] = n;
 	return 0;
 }

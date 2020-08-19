@@ -378,20 +378,20 @@
     <ClCompile Include="yescrypt\yescrypt-opt.c">
       <Filter>yescrypt</Filter>
     </ClCompile>
-    <ClCompile Include="yespower\yespower-ref.c">
-      <Filter>yespower</Filter>
-    </ClCompile>
-    <ClCompile Include="yespower.c">
-      <Filter>algo</Filter>
-    </ClCompile>
     <ClCompile Include="sha3\hmac-sha256-hash.c">
       <Filter>sph</Filter>
     </ClCompile>
     <ClCompile Include="yespower\yespower-blake2b.c">
       <Filter>yespower</Filter>
     </ClCompile>
+    <ClCompile Include="algo\yespower.c">
+      <Filter>algo</Filter>
+    </ClCompile>
     <ClCompile Include="yespower\crypto\blake2b-yp.c">
-      <Filter>yespower\crypto</Filter>
+      <Filter>yespower</Filter>
+    </ClCompile>
+    <ClCompile Include="yespower\yespower-opt.c">
+      <Filter>yespower</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -615,7 +615,7 @@
       <Filter>sph</Filter>
     </ClInclude>
     <ClInclude Include="yespower\crypto\blake2b-yp.h">
-      <Filter>yespower\crypto</Filter>
+      <Filter>yespower</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -660,9 +660,6 @@
     </Filter>
     <Filter Include="yespower">
       <UniqueIdentifier>{c39a51a4-7138-4aa6-805c-a04344ca5637}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="yespower\crypto">
-      <UniqueIdentifier>{40c0bf31-8ced-4275-87db-255d33898491}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
