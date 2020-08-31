@@ -58,8 +58,7 @@ cpuminer_SOURCES = \
   lyra2/Lyra2.c lyra2/Sponge.c \
   yescrypt/yescrypt-common.c yescrypt/yescrypt-best.c \
   yescrypt/sha256_Y.c \
-  yespower/yespower-opt.c yespower/yespower-blake2b.c \
-  yespower/crypto/blake2b-yp.c \
+  yespower/yespower-opt.c sha256.c \
   algo/allium.c \
   algo/axiom.c \
   algo/bastion.c \
