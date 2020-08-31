@@ -99,7 +99,7 @@
 #define __AVX__
 #define __SSE__
 #define __SSE2__
-#define __XOP__
+//#define __XOP__ // actually slower.. 
 #define _MM_HINT_T0 1
 #endif
 
