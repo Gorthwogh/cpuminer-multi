@@ -1,6 +1,6 @@
 /*-
  * Copyright 2009 Colin Percival
- * Copyright 2013-2018 Alexander Peslyak
+ * Copyright 2013-2019 Alexander Peslyak
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,7 +30,7 @@
  * This is a proof-of-work focused fork of yescrypt, including reference and
  * cut-down implementation of the obsolete yescrypt 0.5 (based off its first
  * submission to PHC back in 2014) and a new proof-of-work specific variation
- * known as yespower 0.9.  The former is intended as an upgrade for
+ * known as yespower 1.0.  The former is intended as an upgrade for
  * cryptocurrencies that already use yescrypt 0.5 and the latter may be used
  * as a further upgrade (hard fork) by those and other cryptocurrencies.  The
  * version of algorithm to use is requested through parameters, allowing for
@@ -51,10 +51,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "sha256-P.h"
-#include "sysendian.h"
+#include "sha256-p2b.h"
+#include "sysendian-p2b.h"
 
-#include "yespower.h"
+#include "yespower-p2b.h"
 
 static void blkcpy(uint32_t *dst, const uint32_t *src, size_t count)
 {
@@ -152,9 +152,9 @@ static void blockmix_salsa(uint32_t *B, uint32_t rounds)
 /* Version 0.5 */
 #define PWXrounds_0_5 6
 #define Swidth_0_5 8
-/* Version 0.9 */
-#define PWXrounds_0_9 3
-#define Swidth_0_9 11
+/* Version 1.0 */
+#define PWXrounds_1_0 3
+#define Swidth_1_0 11
 
 /* Derived values.  Not tunable on their own. */
 #define PWXbytes (PWXgather * PWXsimple * 8)
@@ -162,7 +162,7 @@ static void blockmix_salsa(uint32_t *B, uint32_t rounds)
 #define rmin ((PWXbytes + 127) / 128)
 
 /* Runtime derived values.  Not tunable on their own. */
-#define Swidth_to_Sbytes1(Swidth) ((1 << Swidth) * PWXsimple * 8)
+#define Swidth_to_Sbytes1_P2b(Swidth) ((1 << Swidth) * PWXsimple * 8)
 #define Swidth_to_Smask(Swidth) (((1 << Swidth) - 1) * PWXsimple * 8)
 
 typedef struct {
@@ -455,7 +455,7 @@ static void smix(uint32_t *B, size_t r, uint32_t N,
  */
 int yespower(yespower_local_t *local,
     const uint8_t *src, size_t srclen,
-    const yespower_params_t *params, yespower_binary_t *dst)
+    const yespower_params_t *params, yespower_binary_t_p2b *dst)
 {
 	yespower_version_t version = params->version;
 	uint32_t N = params->N;
@@ -468,8 +468,10 @@ int yespower(yespower_local_t *local,
 	pwxform_ctx_t ctx;
 	uint32_t sha256[8];
 
+	memset(dst, 0xff, sizeof(*dst));
+
 	/* Sanity-check parameters */
-	if ((version != YESPOWER_0_5 && version != YESPOWER_0_9) ||
+	if ((version != YESPOWER_0_5 && version != YESPOWER_1_0) ||
 	    N < 1024 || N > 512 * 1024 || r < 8 || r > 32 ||
 	    (N & (N - 1)) != 0 || r < rmin ||
 	    (!pers && perslen)) {
@@ -491,12 +493,12 @@ int yespower(yespower_local_t *local,
 		ctx.salsa20_rounds = 8;
 		ctx.PWXrounds = PWXrounds_0_5;
 		ctx.Swidth = Swidth_0_5;
-		ctx.Sbytes = 2 * Swidth_to_Sbytes1(ctx.Swidth);
+		ctx.Sbytes = 2 * Swidth_to_Sbytes1_P2b(ctx.Swidth);
 	} else {
 		ctx.salsa20_rounds = 2;
-		ctx.PWXrounds = PWXrounds_0_9;
-		ctx.Swidth = Swidth_0_9;
-		ctx.Sbytes = 3 * Swidth_to_Sbytes1(ctx.Swidth);
+		ctx.PWXrounds = PWXrounds_1_0;
+		ctx.Swidth = Swidth_1_0;
+		ctx.Sbytes = 3 * Swidth_to_Sbytes1_P2b(ctx.Swidth);
 	}
 	if ((S = malloc(ctx.Sbytes)) == NULL)
 		goto free_X;
@@ -519,7 +521,7 @@ int yespower(yespower_local_t *local,
 	}
 
 	/* 1: (B_0 ... B_{p-1}) <-- PBKDF2(P, S, 1, p * MFLen) */
-	PBKDF2_SHA256_P((uint8_t *)sha256, sizeof(sha256),
+	PBKDF2_SHA256_P2B((uint8_t *)sha256, sizeof(sha256),
 	    src, srclen, 1, (uint8_t *)B, B_size);
 
 	blkcpy(sha256, B, sizeof(sha256) / sizeof(sha256[0]));
@@ -529,16 +531,16 @@ int yespower(yespower_local_t *local,
 
 	if (version == YESPOWER_0_5) {
 		/* 5: DK <-- PBKDF2(P, B, 1, dkLen) */
-		PBKDF2_SHA256_P((uint8_t *)sha256, sizeof(sha256),
+		PBKDF2_SHA256_P2B((uint8_t *)sha256, sizeof(sha256),
 		    (uint8_t *)B, B_size, 1, (uint8_t *)dst, sizeof(*dst));
 
 		if (pers) {
-			HMAC_SHA256_Buf(dst, sizeof(*dst), pers, perslen,
+			HMAC_SHA256_Buf_P2b(dst, sizeof(*dst), pers, perslen,
 			    (uint8_t *)sha256);
 			SHA256_Buf(sha256, sizeof(sha256), (uint8_t *)dst);
 		}
 	} else {
-		HMAC_SHA256_Buf((uint8_t *)B + B_size - 64, 64,
+		HMAC_SHA256_Buf_P2b((uint8_t *)B + B_size - 64, 64,
 		    sha256, sizeof(sha256), (uint8_t *)dst);
 	}
 
@@ -557,14 +559,14 @@ free_V:
 	return retval;
 }
 
-int yespower_tls(const uint8_t *src, size_t srclen,
-    const yespower_params_t *params, yespower_binary_t *dst)
+int yespower_tls_p2b(const uint8_t *src, size_t srclen,
+    const yespower_params_t *params, yespower_binary_t_p2b *dst)
 {
 /* The reference implementation doesn't use thread-local storage */
 	return yespower(NULL, src, srclen, params, dst);
 }
 
-int yespower_init_local(yespower_local_t *local)
+int yespower_init_local_p2b(yespower_local_t *local)
 {
 /* The reference implementation doesn't use the local structure */
 	local->base = local->aligned = NULL;
@@ -572,8 +574,9 @@ int yespower_init_local(yespower_local_t *local)
 	return 0;
 }
 
-int yespower_free_local(yespower_local_t *local)
+int yespower_free_local_p2b(yespower_local_t *local)
 {
 /* The reference implementation frees its memory in yespower() */
+	(void)local; /* unused */
 	return 0;
 }

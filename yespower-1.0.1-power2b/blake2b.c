@@ -30,10 +30,10 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
-#include "miner.h"
-//#include "simd-utils.h"
-#include "sha3/sph_types.h"
-#include "blake2b-yp.h"
+
+#include "sph_types.h"
+#include "sysendian-p2b.h"
+#include "blake2b.h"
 
 // Cyclic right rotation.
 #ifndef ROTR64
@@ -71,7 +71,7 @@ static const uint64_t blake2b_iv[8] = {
 };
 
 // Compression function. "last" flag indicates last block.
-static void blake2b_compress(blake2b_yp_ctx *ctx, int last)
+static void blake2b_compress(blake2b_ctx *ctx, int last)
 {
     const uint8_t sigma[12][16] = {
         { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 },
@@ -129,7 +129,7 @@ static void blake2b_compress(blake2b_yp_ctx *ctx, int last)
 // Initialize the hashing context "ctx" with optional key "key".
 // 1 <= outlen <= 64 gives the digest size in bytes.
 // Secret key (also <= 64 bytes) is optional (keylen = 0).
-int blake2b_yp_init(blake2b_yp_ctx *ctx, size_t outlen,
+int blake2b_init(blake2b_ctx *ctx, size_t outlen,
     const void *key, size_t keylen) // (keylen=0: no key)
 {
     size_t i;
@@ -157,7 +157,7 @@ int blake2b_yp_init(blake2b_yp_ctx *ctx, size_t outlen,
     }
 
     if (keylen > 0) {
-        blake2b_yp_update(ctx, key, keylen);
+        blake2b_update(ctx, key, keylen);
         ctx->c = 128; // at the end
     }
 
@@ -165,7 +165,7 @@ int blake2b_yp_init(blake2b_yp_ctx *ctx, size_t outlen,
 }
 
 // Add "inlen" bytes from "in" into the hash.
-void blake2b_yp_update(blake2b_yp_ctx *ctx,
+void blake2b_update(blake2b_ctx *ctx,
     const void *in, size_t inlen) // data bytes
 {
     size_t i;
@@ -183,7 +183,7 @@ void blake2b_yp_update(blake2b_yp_ctx *ctx,
 
 // Generate the message digest (size given in init).
 // Result placed in "out".
-void blake2b_yp_final(blake2b_yp_ctx *ctx, void *out)
+void blake2b_final(blake2b_ctx *ctx, void *out)
 {
     size_t i;
 
@@ -208,71 +208,71 @@ void blake2b_yp_final(blake2b_yp_ctx *ctx, void *out)
 }
 
 // inlen = number of bytes
-void blake2b_yp_hash(void *out, const void *in, size_t inlen) {
-    blake2b_yp_ctx ctx;
-    blake2b_yp_init(&ctx, 32, NULL, 0);
-    blake2b_yp_update(&ctx, in, inlen);
-    blake2b_yp_final(&ctx, out);
+void blake2b_hash(void *out, const void *in, size_t inlen) {
+    blake2b_ctx ctx;
+    blake2b_init(&ctx, 32, NULL, 0);
+    blake2b_update(&ctx, in, inlen);
+    blake2b_final(&ctx, out);
 }
 
 // // keylen = number of bytes
-void hmac_blake2b_yp_init(hmac_yp_ctx *hctx, const void *_key, size_t keylen) {
+void hmac_blake2b_init(hmac_ctx *hctx, const void *_key, size_t keylen) {
     const uint8_t *key = _key;
     uint8_t keyhash[32];
     uint8_t pad[64];
     uint64_t i;
 
     if (keylen > 64) {
-        blake2b_yp_hash(keyhash, key, keylen);
+        blake2b_hash(keyhash, key, keylen);
         key = keyhash;
         keylen = 32;
     }
 
-    blake2b_yp_init(&hctx->inner, 32, NULL, 0);
+    blake2b_init(&hctx->inner, 32, NULL, 0);
     memset(pad, 0x36, 64);
     for (i = 0; i < keylen; ++i) {
         pad[i] ^= key[i];
     }
 
-    blake2b_yp_update(&hctx->inner, pad, 64);
-    blake2b_yp_init(&hctx->outer, 32, NULL, 0);
+    blake2b_update(&hctx->inner, pad, 64);
+    blake2b_init(&hctx->outer, 32, NULL, 0);
     memset(pad, 0x5c, 64);
     for (i = 0; i < keylen; ++i) {
         pad[i] ^= key[i];
     }
 
-    blake2b_yp_update(&hctx->outer, pad, 64);
+    blake2b_update(&hctx->outer, pad, 64);
     memset(keyhash, 0, 32);
 }
 
 // datalen = number of bits
-void hmac_blake2b_yp_update(hmac_yp_ctx *hctx, const void *data, size_t datalen) {
+void hmac_blake2b_update(hmac_ctx *hctx, const void *data, size_t datalen) {
     // update the inner state
-    blake2b_yp_update(&hctx->inner, data, datalen);
+    blake2b_update(&hctx->inner, data, datalen);
 }
 
-void hmac_blake2b_yp_final(hmac_yp_ctx *hctx, uint8_t *digest) {
+void hmac_blake2b_final(hmac_ctx *hctx, uint8_t *digest) {
     uint8_t ihash[32];
-    blake2b_yp_final(&hctx->inner, ihash);
-    blake2b_yp_update(&hctx->outer, ihash, 32);
-    blake2b_yp_final(&hctx->outer, digest);
+    blake2b_final(&hctx->inner, ihash);
+    blake2b_update(&hctx->outer, ihash, 32);
+    blake2b_final(&hctx->outer, digest);
     memset(ihash, 0, 32);
 }
 
 // // keylen = number of bytes; inlen = number of bytes
-void hmac_blake2b_yp_hash(void *out, const void *key, size_t keylen, const void *in, size_t inlen) {
-    hmac_yp_ctx hctx;
-    hmac_blake2b_yp_init(&hctx, key, keylen);
-    hmac_blake2b_yp_update(&hctx, in, inlen);
-    hmac_blake2b_yp_final(&hctx, out);
+void hmac_blake2b_hash(void *out, const void *key, size_t keylen, const void *in, size_t inlen) {
+    hmac_ctx hctx;
+    hmac_blake2b_init(&hctx, key, keylen);
+    hmac_blake2b_update(&hctx, in, inlen);
+    hmac_blake2b_final(&hctx, out);
 }
 
-void pbkdf2_blake2b_yp(const uint8_t * passwd, size_t passwdlen, const uint8_t * salt,
+void pbkdf2_blake2b(const uint8_t * passwd, size_t passwdlen, const uint8_t * salt,
     size_t saltlen, uint64_t c, uint8_t * buf, size_t dkLen)
 {
-    hmac_yp_ctx PShctx, hctx;
+    hmac_ctx PShctx, hctx;
     size_t i;
-    uint32_t ivec;
+    uint8_t ivec[4];
     uint8_t U[32];
     uint8_t T[32];
     uint64_t j;
@@ -280,27 +280,27 @@ void pbkdf2_blake2b_yp(const uint8_t * passwd, size_t passwdlen, const uint8_t *
     size_t clen;
 
     /* Compute HMAC state after processing P and S. */
-    hmac_blake2b_yp_init(&PShctx, passwd, passwdlen);
-    hmac_blake2b_yp_update(&PShctx, salt, saltlen);
+    hmac_blake2b_init(&PShctx, passwd, passwdlen);
+    hmac_blake2b_update(&PShctx, salt, saltlen);
 
     /* Iterate through the blocks. */
     for (i = 0; i * 32 < dkLen; i++) {
         /* Generate INT(i + 1). */
-        //ivec = bswap_32( i+1 );
+        be32enc(ivec, (uint32_t)(i + 1));
 
         /* Compute U_1 = PRF(P, S || INT(i)). */
-        memcpy(&hctx, &PShctx, sizeof(hmac_yp_ctx));
-        hmac_blake2b_yp_update(&hctx, &ivec, 4);
-        hmac_blake2b_yp_final(&hctx, U);
+        memcpy(&hctx, &PShctx, sizeof(hmac_ctx));
+        hmac_blake2b_update(&hctx, ivec, 4);
+        hmac_blake2b_final(&hctx, U);
 
         /* T_i = U_1 ... */
         memcpy(T, U, 32);
 
         for (j = 2; j <= c; j++) {
             /* Compute U_j. */
-            hmac_blake2b_yp_init(&hctx, passwd, passwdlen);
-            hmac_blake2b_yp_update(&hctx, U, 32);
-            hmac_blake2b_yp_final(&hctx, U);
+            hmac_blake2b_init(&hctx, passwd, passwdlen);
+            hmac_blake2b_update(&hctx, U, 32);
+            hmac_blake2b_final(&hctx, U);
 
             /* ... xor U_j ... */
             for (k = 0; k < 32; k++) {
@@ -318,5 +318,5 @@ void pbkdf2_blake2b_yp(const uint8_t * passwd, size_t passwdlen, const uint8_t *
     }
 
     /* Clean PShctx, since we never called _Final on it. */
-    memset(&PShctx, 0, sizeof(hmac_yp_ctx));
+    memset(&PShctx, 0, sizeof(hmac_ctx));
 }

@@ -303,8 +303,8 @@
     <ClCompile Include="sha3\md_helper.c">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="yespower\sha256-P.c" />
-    <ClCompile Include="yespower\yespower-opt.c" />
+    <ClCompile Include="yespower-1.0.1\sha256.c" />
+    <ClCompile Include="yespower-1.0.1\yespower-opt.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="compat\jansson\config.h" />
@@ -379,8 +379,10 @@
     <ClInclude Include="yescrypt\sysendian.h" />
     <ClInclude Include="yescrypt\yescrypt-platform.h" />
     <ClInclude Include="yescrypt\yescrypt.h" />
-    <ClInclude Include="yespower\sha256-P.h" />
-    <ClInclude Include="yespower\yespower.h" />
+    <ClInclude Include="yespower-1.0.1\insecure_memzero.h" />
+    <ClInclude Include="yespower-1.0.1\sha256.h" />
+    <ClInclude Include="yespower-1.0.1\sysendian.h" />
+    <ClInclude Include="yespower-1.0.1\yespower.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="asm\neoscrypt_asm.S">

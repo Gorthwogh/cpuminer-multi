@@ -381,14 +381,14 @@
     <ClCompile Include="algo\yespower.c">
       <Filter>algo</Filter>
     </ClCompile>
-    <ClCompile Include="yespower\yespower-opt.c">
-      <Filter>yespower</Filter>
-    </ClCompile>
-    <ClCompile Include="yespower\sha256-P.c">
-      <Filter>yespower</Filter>
-    </ClCompile>
     <ClCompile Include="yescrypt\yescrypt-best.c">
       <Filter>yescrypt</Filter>
+    </ClCompile>
+    <ClCompile Include="yespower-1.0.1\sha256.c">
+      <Filter>yespower</Filter>
+    </ClCompile>
+    <ClCompile Include="yespower-1.0.1\yespower-opt.c">
+      <Filter>yespower</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -605,13 +605,19 @@
     <ClInclude Include="yescrypt\yescrypt-platform.h">
       <Filter>yescrypt</Filter>
     </ClInclude>
-    <ClInclude Include="yespower\yespower.h">
-      <Filter>yespower</Filter>
-    </ClInclude>
     <ClInclude Include="sha3\hmac-sha256-hash.h">
       <Filter>sph</Filter>
     </ClInclude>
-    <ClInclude Include="yespower\sha256-P.h">
+    <ClInclude Include="yespower-1.0.1\sha256.h">
+      <Filter>yespower</Filter>
+    </ClInclude>
+    <ClInclude Include="yespower-1.0.1\yespower.h">
+      <Filter>yespower</Filter>
+    </ClInclude>
+    <ClInclude Include="yespower-1.0.1\insecure_memzero.h">
+      <Filter>yespower</Filter>
+    </ClInclude>
+    <ClInclude Include="yespower-1.0.1\sysendian.h">
       <Filter>yespower</Filter>
     </ClInclude>
   </ItemGroup>
@@ -656,7 +662,10 @@
       <UniqueIdentifier>{678c0f76-3cd5-418b-bc6b-84a10d81f789}</UniqueIdentifier>
     </Filter>
     <Filter Include="yespower">
-      <UniqueIdentifier>{c39a51a4-7138-4aa6-805c-a04344ca5637}</UniqueIdentifier>
+      <UniqueIdentifier>{9b3ff408-f62a-4357-b981-5d34733d1c7a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="yespower2b">
+      <UniqueIdentifier>{ec37805c-04d4-4d76-80ac-7222db324f51}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

@@ -33,6 +33,10 @@
 #include <stdint.h>
 #include <stdlib.h> /* for size_t */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  * Internal type used by the memory allocator.  Please do not use it directly.
  * Use yespower_local_t instead.
@@ -50,7 +54,7 @@ typedef yespower_region_t yespower_local_t;
 /*
  * Type for yespower algorithm version numbers.
  */
-typedef enum { YESPOWER_0_5 = 5, YESPOWER_0_9 = 9 } yespower_version_t;
+typedef enum { YESPOWER_0_5 = 5, YESPOWER_1_0 = 10 } yespower_version_t;
 
 /**
  * yespower parameters combined into one struct.
@@ -103,9 +107,7 @@ extern int yespower_free_local(yespower_local_t *local);
  *
  * MT-safe as long as local and dst are local to the thread.
  */
-extern int yespower(yespower_local_t *local,
-    const uint8_t *src, size_t srclen,
-    const yespower_params_t *params, yespower_binary_t *dst);
+extern int yespower(yespower_local_t *local, const uint8_t *src, size_t srclen, const yespower_params_t *params, yespower_binary_t *dst);
 
 /**
  * yespower_tls(src, srclen, params, dst):
@@ -116,7 +118,10 @@ extern int yespower(yespower_local_t *local,
  *
  * MT-safe as long as dst is local to the thread.
  */
-extern int yespower_tls(const uint8_t *src, size_t srclen,
-    const yespower_params_t *params, yespower_binary_t *dst, int thread);
+extern int yespower_tls(const uint8_t *src, size_t srclen, const yespower_params_t *params, yespower_binary_t *dst, int thrid);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* !_YESPOWER_H_ */
