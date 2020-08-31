@@ -267,6 +267,7 @@
     <ClCompile Include="algo\xevan.c" />
     <ClCompile Include="algo\yescrypt.c" />
     <ClCompile Include="algo\zr5.c" />
+    <ClCompile Include="yescrypt\yescrypt-best.c" />
     <ClCompile Include="yescrypt\yescrypt-common.c" />
     <ClCompile Include="yescrypt\sha256_Y.c" />
     <ClCompile Include="sha3\aes_helper.c">
@@ -302,9 +303,7 @@
     <ClCompile Include="sha3\md_helper.c">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="yescrypt\yescrypt-opt.c" />
-    <ClCompile Include="yespower\crypto\blake2b-yp.c" />
-    <ClCompile Include="yespower\yespower-blake2b.c" />
+    <ClCompile Include="yespower\sha256-P.c" />
     <ClCompile Include="yespower\yespower-opt.c" />
   </ItemGroup>
   <ItemGroup>
@@ -380,7 +379,7 @@
     <ClInclude Include="yescrypt\sysendian.h" />
     <ClInclude Include="yescrypt\yescrypt-platform.h" />
     <ClInclude Include="yescrypt\yescrypt.h" />
-    <ClInclude Include="yespower\crypto\blake2b-yp.h" />
+    <ClInclude Include="yespower\sha256-P.h" />
     <ClInclude Include="yespower\yespower.h" />
   </ItemGroup>
   <ItemGroup>

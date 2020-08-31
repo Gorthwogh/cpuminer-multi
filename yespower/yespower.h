@@ -32,13 +32,6 @@
 
 #include <stdint.h>
 #include <stdlib.h> /* for size_t */
-#include "miner.h"
-//#include "simd-utils.h"
-#include <openssl/sha.h>
-
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 /**
  * Internal type used by the memory allocator.  Please do not use it directly.
@@ -57,7 +50,7 @@ typedef yespower_region_t yespower_local_t;
 /*
  * Type for yespower algorithm version numbers.
  */
-typedef enum { YESPOWER_0_5 = 5, YESPOWER_1_0 = 10 } yespower_version_t;
+typedef enum { YESPOWER_0_5 = 5, YESPOWER_0_9 = 9 } yespower_version_t;
 
 /**
  * yespower parameters combined into one struct.
@@ -74,12 +67,7 @@ typedef struct {
  */
 typedef struct {
 	unsigned char uc[32];
-} yespower_binary_t;// ((aligned(64)));
-
-extern yespower_params_t yespower_params;
-
-//SHA256_CTX sha256_prehash_ctx;
-extern __thread SHA256_CTX sha256_prehash_ctx;
+} yespower_binary_t;
 
 /**
  * yespower_init_local(local):
@@ -117,11 +105,7 @@ extern int yespower_free_local(yespower_local_t *local);
  */
 extern int yespower(yespower_local_t *local,
     const uint8_t *src, size_t srclen,
-    const yespower_params_t *params, yespower_binary_t *dst, int thrid);
-
-extern int yespower_b2b(yespower_local_t *local,
-    const uint8_t *src, size_t srclen,
-    const yespower_params_t *params, yespower_binary_t *dst, int thrid );
+    const yespower_params_t *params, yespower_binary_t *dst);
 
 /**
  * yespower_tls(src, srclen, params, dst):
@@ -133,31 +117,6 @@ extern int yespower_b2b(yespower_local_t *local,
  * MT-safe as long as dst is local to the thread.
  */
 extern int yespower_tls(const uint8_t *src, size_t srclen,
-    const yespower_params_t *params, yespower_binary_t *dst, int thr_id);
-
-extern int yespower_b2b_tls(const uint8_t *src, size_t srclen,
-    const yespower_params_t *params, yespower_binary_t *dst, int thr_id);
-
-
-#if defined(__AVX2__)
-
-typedef struct
-{
-   __m256i uc[8];
-} yespower_8way_binary_t __attribute__ ((aligned (128)));
-
-extern int yespower_8way( yespower_local_t *local, const __m256i *src,
-                          size_t srclen, const yespower_params_t *params,
-                          yespower_8way_binary_t *dst, int thrid );
-
-
-extern int yespower_8way_tls( const __m256i *src, size_t srclen,
-    const yespower_params_t *params, yespower_8way_binary_t *dst, int thr_id );
-
-#endif // AVX2
-
-#ifdef __cplusplus
-}
-#endif
+    const yespower_params_t *params, yespower_binary_t *dst, int thread);
 
 #endif /* !_YESPOWER_H_ */

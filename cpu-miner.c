@@ -2512,7 +2512,7 @@ static void *miner_thread(void *userdata)
 			rc = scanhash_yespower(thr_id, &work, max_nonce, &hashes_done, 6);
 			break;
 		case ALGO_POWER2B:
-			rc = scanhash_yespower_b2b(thr_id, &work, max_nonce, &hashes_done);
+			//rc = scanhash_yespower_b2b(thr_id, &work, max_nonce, &hashes_done);
 			break;
 
 		case ALGO_ZR5:

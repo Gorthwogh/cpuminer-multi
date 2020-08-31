@@ -375,23 +375,20 @@
     <ClCompile Include="yescrypt\sha256_Y.c">
       <Filter>yescrypt</Filter>
     </ClCompile>
-    <ClCompile Include="yescrypt\yescrypt-opt.c">
-      <Filter>yescrypt</Filter>
-    </ClCompile>
     <ClCompile Include="sha3\hmac-sha256-hash.c">
       <Filter>sph</Filter>
-    </ClCompile>
-    <ClCompile Include="yespower\yespower-blake2b.c">
-      <Filter>yespower</Filter>
     </ClCompile>
     <ClCompile Include="algo\yespower.c">
       <Filter>algo</Filter>
     </ClCompile>
-    <ClCompile Include="yespower\crypto\blake2b-yp.c">
-      <Filter>yespower</Filter>
-    </ClCompile>
     <ClCompile Include="yespower\yespower-opt.c">
       <Filter>yespower</Filter>
+    </ClCompile>
+    <ClCompile Include="yespower\sha256-P.c">
+      <Filter>yespower</Filter>
+    </ClCompile>
+    <ClCompile Include="yescrypt\yescrypt-best.c">
+      <Filter>yescrypt</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -614,7 +611,7 @@
     <ClInclude Include="sha3\hmac-sha256-hash.h">
       <Filter>sph</Filter>
     </ClInclude>
-    <ClInclude Include="yespower\crypto\blake2b-yp.h">
+    <ClInclude Include="yespower\sha256-P.h">
       <Filter>yespower</Filter>
     </ClInclude>
   </ItemGroup>
