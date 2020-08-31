@@ -96,6 +96,7 @@
 #elif defined(__ARM_NEON)
 #include "sse2neon.h"
 /* Just a quick hack */
+#define __AVX__
 #define __SSE__
 #define __SSE2__
 #define _MM_HINT_T0 1
