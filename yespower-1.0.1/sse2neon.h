@@ -4902,7 +4902,28 @@ FORCE_INLINE __m128i _mm_aesenclast_si128(__m128i a, __m128i RoundKey)
 }
 
 
-#define _mm_roti_epi32(r, c) _mm_xor_si128(_mm_slli_epi32((r), (c)), _mm_srli_epi32((r), 32 - (c)))
+//#define _mm_roti_epi32(r, c) _mm_xor_si128(_mm_slli_epi32((r), (c)), _mm_srli_epi32((r), 32 - (c)))
+
+#define _mm_roti_epi32(r, c) (                              \
+            ((c) == 8) ?                                            \
+                _mm_shuffle_epi8((r), _mm_set_epi8(14, 13, 12, 15,  \
+                                                   10,  9,  8, 11,  \
+                                                    6,  5,  4,  7,  \
+                                                    2,  1,  0,  3)) \
+            : ((c) == 16) ?                                         \
+                _mm_shuffle_epi8((r), _mm_set_epi8(13, 12, 15, 14,  \
+                                                    9,  8, 11, 10,  \
+                                                    5,  4,  7,  6,  \
+                                                    1,  0,  3,  2)) \
+            : ((c) == 24) ?                                         \
+                _mm_shuffle_epi8((r), _mm_set_epi8(12, 15, 14, 13,  \
+                                                    8, 11, 10,  9,  \
+                                                    4,  7,  6,  5,  \
+                                                    0,  3,  2,  1)) \
+            :                                                       \
+                _mm_xor_si128(_mm_slli_epi32((r), (c)),             \
+                              _mm_srli_epi32((r), 32-(c)))          \
+        )
 
 // Emits the Advanced Encryption Standard (AES) instruction aeskeygenassist.
 // This instruction generates a round key for AES encryption. See
