@@ -1394,6 +1394,7 @@ FORCE_INLINE __m128i _mm_shuffle_epi_3332(__m128i a)
     return vreinterpretq_m128i_s32(vcombine_s32(a32, a33));
 }
 
+
 // Shuffle packed 8-bit integers in a according to shuffle control mask in the
 // corresponding 8-bit element of b, and store the results in dst.
 // https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_shuffle_epi8
@@ -4899,6 +4900,9 @@ FORCE_INLINE __m128i _mm_aesenclast_si128(__m128i a, __m128i RoundKey)
             v[i / 4][i % 4] ^ vreinterpretq_nth_u8_m128i(RoundKey, i);
     return a;
 }
+
+
+#define _mm_roti_epi32(r, c) _mm_xor_si128(_mm_slli_epi32((r), (c)), _mm_srli_epi32((r), 32 - (c)))
 
 // Emits the Advanced Encryption Standard (AES) instruction aeskeygenassist.
 // This instruction generates a round key for AES encryption. See
