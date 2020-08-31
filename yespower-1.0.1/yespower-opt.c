@@ -61,6 +61,8 @@
 #warning "Note: AVX and XOP are not enabled.  That's OK."
 #elif defined(__x86_64__) || defined(__i386__)
 #warning "SSE2 not enabled.  Expect poor performance."
+#elif defined(__ARM_NEON)
+#warning "Note: NEON is enabled.  That's experimental."
 #else
 #warning "Note: building generic code for non-x86.  That's OK."
 #endif
@@ -91,6 +93,12 @@
 #endif
 #elif defined(__SSE__)
 #include <xmmintrin.h>
+#elif defined(__ARM_NEON)
+#include "sse2neon.h"
+/* Just a quick hack */
+#define __SSE__
+#define __SSE2__
+#define _MM_HINT_T0 1
 #endif
 
 #include <errno.h>
