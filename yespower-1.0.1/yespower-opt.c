@@ -96,9 +96,10 @@
 #elif defined(__ARM_NEON)
 #include "sse2neon.h"
 /* Just a quick hack */
-#define __AVX__
-#define __SSE__
-#define __SSE2__
+//#define __AVX__
+//#define __SSE__
+//#define __SSE2__
+#define __SSE_2_NEON_
 //#define __XOP__ // actually slower.. 
 #define _MM_HINT_T0 1
 #endif
@@ -132,6 +133,8 @@
 
 #ifdef __SSE__
 #define PREFETCH(x, hint) _mm_prefetch((const char *)(x), (hint));
+#elif __SSE_2_NEON_
+#define PREFETCH(x, hint) _mm_prefetch((const char *)(x), (hint));
 #else
 #undef PREFETCH
 #endif
@@ -140,6 +143,8 @@ typedef union {
 	uint32_t w[16];
 	uint64_t d[8];
 #ifdef __SSE2__
+	__m128i q[4];
+#elif __SSE_2_NEON_
 	__m128i q[4];
 #endif
 } salsa20_blk_t;
@@ -177,7 +182,7 @@ static inline void salsa20_simd_unshuffle(const salsa20_blk_t *Bin,
 #undef UNCOMBINE
 }
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(__SSE_2_NEON_)
 #define DECL_X \
 	__m128i X0, X1, X2, X3;
 #define DECL_Y \
@@ -450,7 +455,7 @@ typedef struct {
 #define DECL_SMASK2REG /* empty */
 #define MAYBE_MEMORY_BARRIER /* empty */
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(__SSE_2_NEON_)
 /*
  * (V)PSRLDQ and (V)PSHUFD have higher throughput than (V)PSRLQ on some CPUs
  * starting with Sandy Bridge.  Additionally, PSHUFD uses separate source and
@@ -463,6 +468,9 @@ typedef struct {
 #ifdef __AVX__
 #define HI32(X) \
 	_mm_srli_si128((X), 4)
+#elif __SSE_2_NEON_
+#define HI32(X) \
+	_mm_srli_si128((X), 4)
 #elif 1 /* As an option, check for __SSE4_1__ here not to hurt Conroe */
 #define HI32(X) \
 	_mm_shuffle_epi32((X), _MM_SHUFFLE(2,3,0,1))
@@ -471,8 +479,7 @@ typedef struct {
 	_mm_srli_epi64((X), 32)
 #endif
 
-#if defined(__x86_64__) && \
-    __GNUC__ == 4 && __GNUC_MINOR__ < 6 && !defined(__ICC)
+#if defined(__x86_64__) && __GNUC__ == 4 && __GNUC_MINOR__ < 6 && !defined(__ICC)
 #ifdef __AVX__
 #define MOVQ "vmovq"
 #else
@@ -502,6 +509,8 @@ typedef struct {
 	((uint64_t)(uint32_t)_mm_cvtsi128_si32(X) | \
 	((uint64_t)(uint32_t)_mm_extract_epi32((X), 1) << 32))
 #endif
+#elif defined(_SSE_2_NEON_)
+#define EXTRACT64(X) _mm_cvtsi128_si64(X)
 #else
 /* 32-bit or compilers with known past bugs in _mm_cvtsi128_si64() */
 #define EXTRACT64(X) \
@@ -527,6 +536,21 @@ static volatile uint64_t Smask2var = Smask2;
 #define FORCE_REGALLOC_1 /* empty */
 #define FORCE_REGALLOC_2 /* empty */
 #endif
+#define PWXFORM_SIMD(X) { \
+	uint64_t x; \
+	FORCE_REGALLOC_1 \
+	uint32_t lo = x = EXTRACT64(X) & Smask2reg; \
+	FORCE_REGALLOC_2 \
+	uint32_t hi = x >> 32; \
+	X = _mm_mul_epu32(HI32(X), X); \
+	X = _mm_add_epi64(X, *(__m128i *)(S0 + lo)); \
+	X = _mm_xor_si128(X, *(__m128i *)(S1 + hi)); \
+}
+#elif defined(_SSE_2_NEON_)
+static volatile uint64_t Smask2var = Smask2;
+#define DECL_SMASK2REG uint64_t Smask2reg = Smask2var;
+#define FORCE_REGALLOC_1 /* empty */
+#define FORCE_REGALLOC_2 /* empty */
 #define PWXFORM_SIMD(X) { \
 	uint64_t x; \
 	FORCE_REGALLOC_1 \
