@@ -468,7 +468,7 @@ typedef struct {
 #ifdef __AVX__
 #define HI32(X) \
 	_mm_srli_si128((X), 4)
-#elif __SSE_2_NEON_
+#elif defined(__SSE_2_NEON_)
 #define HI32(X) \
 	_mm_srli_si128((X), 4)
 #elif 1 /* As an option, check for __SSE4_1__ here not to hurt Conroe */
