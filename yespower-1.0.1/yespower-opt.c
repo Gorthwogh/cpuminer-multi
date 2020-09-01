@@ -133,7 +133,7 @@
 
 #ifdef __SSE__
 #define PREFETCH(x, hint) _mm_prefetch((const char *)(x), (hint));
-#elif __SSE_2_NEON_
+#elif defined(__SSE_2_NEON_)
 #define PREFETCH(x, hint) _mm_prefetch((const char *)(x), (hint));
 #else
 #undef PREFETCH
@@ -144,7 +144,7 @@ typedef union {
 	uint64_t d[8];
 #ifdef __SSE2__
 	__m128i q[4];
-#elif __SSE_2_NEON_
+#elif defined(__SSE_2_NEON_)
 	__m128i q[4];
 #endif
 } salsa20_blk_t;
