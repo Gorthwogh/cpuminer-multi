@@ -97,15 +97,14 @@
 #endif
 #elif defined(__SSE__)
 #include <xmmintrin.h>
-#elif defined(__ARM_NEON)
+/*#elif defined(__ARM_NEON)
 #include "sse2neon.h"
-/* Just a quick hack */
-#define __AVX__
-#define __SSE__
-#define __SSE2__
-//#define __SSE_2_NEON_
+//#define __AVX__
+//#define __SSE__
+//#define __SSE2__
+#define __SSE_2_NEON_
 #define __XOP__ // actually slower.. 
-#define _MM_HINT_T0 1
+#define _MM_HINT_T0 1*/
 #endif
 
 #include <errno.h>
