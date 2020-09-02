@@ -477,7 +477,7 @@ typedef struct {
 	_mm_srli_si128((X), 4)
 #elif defined(__SSE_2_NEON_)
 #define HI32(X) \
-	_mm_srli_si128((X), 4)
+	_mm_shuffle_epi32((X), _MM_SHUFFLE(2,3,0,1));//_mm_srli_si128((X), 4)
 #elif defined(__SSE4_1_) //1 /* As an option, check for __SSE4_1__ here not to hurt Conroe */
 #define HI32(X) \
 	_mm_shuffle_epi32((X), _MM_SHUFFLE(2,3,0,1))
