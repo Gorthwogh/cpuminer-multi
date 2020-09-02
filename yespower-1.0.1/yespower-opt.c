@@ -100,10 +100,10 @@
 #elif defined(__ARM_NEON)
 #include "sse2neon.h"
 /* Just a quick hack */
-//#define __AVX__
-//#define __SSE__
-//#define __SSE2__
-#define __SSE_2_NEON_
+#define __AVX__
+#define __SSE__
+#define __SSE2__
+//#define __SSE_2_NEON_
 #define __XOP__ // actually slower.. 
 #define _MM_HINT_T0 1
 #endif
@@ -477,7 +477,7 @@ typedef struct {
 #elif defined(__SSE_2_NEON_)
 #define HI32(X) \
 	_mm_srli_si128((X), 4)
-#elif 1 /* As an option, check for __SSE4_1__ here not to hurt Conroe */
+#elif defined(__SSE4_1_) //1 /* As an option, check for __SSE4_1__ here not to hurt Conroe */
 #define HI32(X) \
 	_mm_shuffle_epi32((X), _MM_SHUFFLE(2,3,0,1))
 #else
