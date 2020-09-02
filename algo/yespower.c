@@ -126,6 +126,10 @@ int scanhash_yespower(int thr_id, struct work *work, uint32_t max_nonce, uint64_
 	for (i = 0; i < 19; i++)
 		be32enc(&data.u32[i], pdata[i]);
 
+	// do sha256 prehash
+	SHA256_Init(&sha256_prehash_ctx);
+	SHA256_Update(&sha256_prehash_ctx, data.u32, 64);
+
 	do {
 		be32enc(&data.u32[19], ++n);
 

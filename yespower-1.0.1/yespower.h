@@ -32,6 +32,7 @@
 
 #include <stdint.h>
 #include <stdlib.h> /* for size_t */
+#include "compat.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -73,6 +74,8 @@ typedef struct {
 	unsigned char uc[32];
 } yespower_binary_t;
 
+extern __thread SHA256_CTX sha256_prehash_ctx;
+
 /**
  * yespower_init_local(local):
  * Initialize the thread-local (RAM) data structure.  Actual memory allocation
@@ -107,7 +110,7 @@ extern int yespower_free_local(yespower_local_t *local);
  *
  * MT-safe as long as local and dst are local to the thread.
  */
-extern int yespower(yespower_local_t *local, const uint8_t *src, size_t srclen, const yespower_params_t *params, yespower_binary_t *dst);
+extern int yespower(yespower_local_t *local, const uint8_t *src, size_t srclen, const yespower_params_t *params, yespower_binary_t *dst, int thrid);
 
 /**
  * yespower_tls(src, srclen, params, dst):

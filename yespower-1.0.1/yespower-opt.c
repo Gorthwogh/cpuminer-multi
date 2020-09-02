@@ -97,14 +97,14 @@
 #endif
 #elif defined(__SSE__)
 #include <xmmintrin.h>
-/*#elif defined(__ARM_NEON)
+#elif defined(__ARM_NEON)
 #include "sse2neon.h"
 //#define __AVX__
 //#define __SSE__
 //#define __SSE2__
 #define __SSE_2_NEON_
 #define __XOP__ // actually slower.. 
-#define _MM_HINT_T0 1*/
+#define _MM_HINT_T0 1
 #endif
 
 #include <errno.h>
@@ -1074,7 +1074,7 @@ static void smix(uint8_t *B, size_t r, uint32_t N,
 int yespower(yespower_local_t *local,
     const uint8_t *src, size_t srclen,
     const yespower_params_t *params,
-    yespower_binary_t *dst)
+    yespower_binary_t *dst, int thrid)
 {
 	yespower_version_t version = params->version;
 	uint32_t N = params->N;
@@ -1087,6 +1087,7 @@ int yespower(yespower_local_t *local,
 	salsa20_blk_t *V, *XY;
 	pwxform_ctx_t ctx;
 	uint8_t sha256[32];
+	SHA256_CTX sha256_ctx;
 
 	/* Sanity-check parameters */
 	if ((version != YESPOWER_0_5 && version != YESPOWER_1_0) ||
@@ -1123,21 +1124,50 @@ int yespower(yespower_local_t *local,
 	ctx.S0 = S;
 	ctx.S1 = S + Swidth_to_Sbytes1(Swidth);
 
-	SHA256_Buf(src, srclen, sha256);
+	//SHA256_Buf(src, srclen, sha256);
+	memcpy(&sha256_ctx, &sha256_prehash_ctx, sizeof sha256_ctx);
+	SHA256_Update(&sha256_ctx, src + 64, srclen - 64);
+	SHA256_Final(sha256, &sha256_ctx);
 
 	if (version == YESPOWER_0_5) {
-		PBKDF2_SHA256(sha256, sizeof(sha256), src, srclen, 1,
-		    B, B_size);
+		PBKDF2_SHA256(sha256, sizeof(sha256), src, srclen, 1, B, B_size);
+
+		if (work_restart[thrid].restart) return 0;
+
 		memcpy(sha256, B, sizeof(sha256));
 		smix(B, r, N, V, XY, &ctx);
-		PBKDF2_SHA256(sha256, sizeof(sha256), B, B_size, 1,
-		    (uint8_t *)dst, sizeof(*dst));
+
+		if (work_restart[thrid].restart) return 0;
+
+		PBKDF2_SHA256(sha256, sizeof(sha256), B, B_size, 1, (uint8_t *)dst,
+			sizeof(*dst));
+
+		if (work_restart[thrid].restart) return 0;
 
 		if (pers) {
-			HMAC_SHA256_Buf(dst, sizeof(*dst), pers, perslen,
-			    sha256);
-			SHA256_Buf(sha256, sizeof(sha256), (uint8_t *)dst);
-		}
+			src = pers;
+			srclen = perslen;
+		} else
+			srclen = 0;
+
+		HMAC_SHA256_CTX ctx;
+		HMAC_SHA256_Init(&ctx, dst, sizeof(*dst));
+		HMAC_SHA256_Update(&ctx, src, srclen);
+		HMAC_SHA256_Final(sha256, &ctx);
+
+		//      SHA256_CTX ctx;
+		SHA256_Init(&sha256_ctx);
+		SHA256_Update(&sha256_ctx, sha256, sizeof(sha256));
+		SHA256_Final((unsigned char*)dst, &sha256_ctx);
+
+
+		/*
+			  if ( pers )
+			  {
+					HMAC_SHA256_Buf( dst, sizeof(*dst), pers, perslen, sha256 );
+				 SHA256_Buf( sha256, sizeof(sha256), (uint8_t *)dst );
+				}
+		*/
 	} else {
 		ctx.S2 = S + 2 * Swidth_to_Sbytes1(Swidth);
 		ctx.w = 0;
@@ -1145,15 +1175,18 @@ int yespower(yespower_local_t *local,
 		if (pers) {
 			src = pers;
 			srclen = perslen;
-		} else {
+		} else
 			srclen = 0;
-		}
 
 		PBKDF2_SHA256(sha256, sizeof(sha256), src, srclen, 1, B, 128);
 		memcpy(sha256, B, sizeof(sha256));
+
+		if (work_restart[thrid].restart) return 0;
+
 		smix_1_0(B, r, N, V, XY, &ctx);
-		HMAC_SHA256_Buf(B + B_size - 64, 64,
-		    sha256, sizeof(sha256), (uint8_t *)dst);
+
+		HMAC_SHA256_Buf(B + B_size - 64, 64, sha256, sizeof(sha256),
+			(uint8_t *)dst);
 	}
 
 	/* Success! */
@@ -1181,7 +1214,7 @@ int yespower_tls(const uint8_t *src, size_t srclen, const yespower_params_t *par
 		initialized = 1;
 	}
 
-	return yespower(&local, src, srclen, params, dst);
+	return yespower(&local, src, srclen, params, dst, thrid);
 }
 
 int yespower_init_local(yespower_local_t *local)
