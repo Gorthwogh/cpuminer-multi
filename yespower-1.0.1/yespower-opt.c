@@ -477,7 +477,7 @@ typedef struct {
 	_mm_srli_si128((X), 4)
 #elif defined(__SSE_2_NEON_)
 #define HI32(X) \
-	_mm_shuffle_epi32((X), _MM_SHUFFLE(2,3,0,1))//_mm_srli_si128((X), 4)
+	_mm_srli_si128((X), 4)
 #elif defined(__SSE4_1_) //1 /* As an option, check for __SSE4_1__ here not to hurt Conroe */
 #define HI32(X) \
 	_mm_shuffle_epi32((X), _MM_SHUFFLE(2,3,0,1))
@@ -517,7 +517,7 @@ typedef struct {
 	((uint64_t)(uint32_t)_mm_extract_epi32((X), 1) << 32))
 #endif
 #elif defined(__SSE_2_NEON_)
-#define EXTRACT64(X) _mm_cvtsi128_si64(X)
+#define EXTRACT64(X) _mm_extract_epi64((X), 0)
 #else
 /* 32-bit or compilers with known past bugs in _mm_cvtsi128_si64() */
 #define EXTRACT64(X) \
