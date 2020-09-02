@@ -128,11 +128,13 @@
 #define restrict
 #endif
 
+/*
 #ifdef __GNUC__
 #define unlikely(exp) __builtin_expect(exp, 0)
 #else
 #define unlikely(exp) (exp)
 #endif
+*/
 
 #ifdef __SSE__
 #define PREFETCH(x, hint) _mm_prefetch((const char *)(x), (hint));
@@ -999,10 +1001,12 @@ static void smix2(uint8_t *B, size_t r, uint32_t N, uint32_t Nloop,
 		} while (Nloop -= 2);
 #if _YESPOWER_OPT_C_PASS_ == 1
 	} else {
-		const salsa20_blk_t * V_j = &V[j * s];
-		j = blockmix_xor(X, V_j, Y, r, ctx) & (N - 1);
-		V_j = &V[j * s];
-		blockmix_xor(Y, V_j, X, r, ctx);
+		do {
+			const salsa20_blk_t * V_j = &V[j * s];
+			j = blockmix_xor(X, V_j, Y, r, ctx) & (N - 1);
+			V_j = &V[j * s];
+			j = blockmix_xor(Y, V_j, X, r, ctx) & (N - 1);
+		} while (Nloop -= 2);
 	}
 #endif
 
