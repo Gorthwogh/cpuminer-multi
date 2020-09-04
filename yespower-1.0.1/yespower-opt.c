@@ -733,8 +733,10 @@ static void blockmix(const salsa20_blk_t *restrict Bin,
 	r = r * 2 - 1;
 #ifdef PREFETCH
 	PREFETCH(&Bin[r], _MM_HINT_T0)
+	PREFETCH(&Bout[r], _MM_HINT_T0)
 		for (i = 0; i < r; i++) {
 			PREFETCH(&Bin[i], _MM_HINT_T0)
+			PREFETCH(&Bout[i], _MM_HINT_T0)
 		}
 #endif
 
