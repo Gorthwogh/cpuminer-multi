@@ -731,6 +731,12 @@ static void blockmix(const salsa20_blk_t *restrict Bin,
 
 	/* Convert count of 128-byte blocks to max index of 64-byte block */
 	r = r * 2 - 1;
+#ifdef PREFETCH
+	PREFETCH(&Bin[r], _MM_HINT_T0)
+		for (i = 0; i < r; i++) {
+			PREFETCH(&Bin[i], _MM_HINT_T0)
+		}
+#endif
 
 	READ_X(Bin[r])
 
@@ -776,6 +782,7 @@ static uint32_t blockmix_xor(const salsa20_blk_t *restrict Bin1,
 	PREFETCH(&Bin2[r], _MM_HINT_T0)
 	for (i = 0; i < r; i++) {
 		PREFETCH(&Bin2[i], _MM_HINT_T0)
+		PREFETCH(&Bin1[i], _MM_HINT_T0)
 	}
 #endif
 
@@ -1136,17 +1143,17 @@ int yespower(yespower_local_t *local,
 	if (version == YESPOWER_0_5) {
 		PBKDF2_SHA256(sha256, sizeof(sha256), src, srclen, 1, B, B_size);
 
-		if (work_restart[thrid].restart) return 0;
+		if (unlikely(work_restart[thrid].restart)) return 0;
 
 		memcpy(sha256, B, sizeof(sha256));
 		smix(B, r, N, V, XY, &ctx);
 
-		if (work_restart[thrid].restart) return 0;
+		if (unlikely(work_restart[thrid].restart)) return 0;
 
 		PBKDF2_SHA256(sha256, sizeof(sha256), B, B_size, 1, (uint8_t *)dst,
 			sizeof(*dst));
 
-		if (work_restart[thrid].restart) return 0;
+		if (unlikely(work_restart[thrid].restart)) return 0;
 
 		if (pers) {
 			src = pers;
@@ -1185,7 +1192,7 @@ int yespower(yespower_local_t *local,
 		PBKDF2_SHA256(sha256, sizeof(sha256), src, srclen, 1, B, 128);
 		memcpy(sha256, B, sizeof(sha256));
 
-		if (work_restart[thrid].restart) return 0;
+		if (unlikely(work_restart[thrid].restart)) return 0;
 
 		smix_1_0(B, r, N, V, XY, &ctx);
 
