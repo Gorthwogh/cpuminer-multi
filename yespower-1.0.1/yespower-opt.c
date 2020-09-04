@@ -103,7 +103,7 @@
 //#define __SSE__
 //#define __SSE2__
 #define __SSE_2_NEON_
-//#define __XOP__ // actually slower.. 
+#define __XOP__ // actually slower.. 
 #define _MM_HINT_T0 1
 #endif
 
