@@ -796,6 +796,9 @@ static uint32_t blockmix_xor(const salsa20_blk_t *restrict Bin1,
 	i = 0;
 	r--;
 	do {
+#ifdef PREFETCH
+		PREFETCH(&Bout[i], _MM_HINT_T0)
+#endif
 		XOR_X(Bin1[i])
 		XOR_X(Bin2[i])
 		PWXFORM
