@@ -103,7 +103,7 @@
 //#define __SSE__
 //#define __SSE2__
 #define __SSE_2_NEON_
-#define __XOP__ // actually slower.. 
+//#define __XOP__ // actually slower.. 
 #define _MM_HINT_T0 1
 #endif
 
@@ -560,14 +560,12 @@ static volatile uint64_t Smask2var = Smask2;
 #define FORCE_REGALLOC_1 /* empty */
 #define FORCE_REGALLOC_2 /* empty */
 #define PWXFORM_SIMD(X) { \
-	uint64_t x; \
-	FORCE_REGALLOC_1 \
-	uint32_t lo = x = EXTRACT64(X) & Smask2reg; \
-	FORCE_REGALLOC_2 \
-	uint32_t hi = x >> 32; \
+	__m128i x = _mm_and_si128(X, _mm_set1_epi64x(Smask2)); \
+	__m128i s0 = *(__m128i *)(S0 + (uint32_t)_mm_cvtsi128_si32(x)); \
+	__m128i s1 = *(__m128i *)(S1 + (uint32_t)_mm_extract_epi32(x, 1)); \
 	X = _mm_mul_epu32(HI32(X), X); \
-	X = _mm_add_epi64(X, *(__m128i *)(S0 + lo)); \
-	X = _mm_xor_si128(X, *(__m128i *)(S1 + hi)); \
+	X = _mm_add_epi64(X, s0); \
+	X = _mm_xor_si128(X, s1); \
 }
 #elif defined(__x86_64__)
 /* 64-bit without AVX.  This relies on out-of-order execution and register
