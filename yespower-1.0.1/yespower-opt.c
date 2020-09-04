@@ -780,19 +780,16 @@ static uint32_t blockmix_xor(const salsa20_blk_t *restrict Bin1,
 	/* Convert count of 128-byte blocks to max index of 64-byte block */
 	r = r * 2 - 1;
 
-/*#ifdef PREFETCH
+#ifdef PREFETCH
+	PREFETCH(&Bout[0], _MM_HINT_T0)
 	PREFETCH(&Bin1[r], _MM_HINT_T0)
 	PREFETCH(&Bin2[r], _MM_HINT_T0)
 	for (i = 0; i < r; i++) {
 		PREFETCH(&Bin2[i], _MM_HINT_T0)
 		PREFETCH(&Bin1[i], _MM_HINT_T0)
 	}
-#endif*/
-#ifdef PREFETCH
-		PREFETCH(&Bout[i], _MM_HINT_T0)
-		PREFETCH(&Bin2[i], _MM_HINT_T0)
-		PREFETCH(&Bin1[i], _MM_HINT_T0)
 #endif
+
 	XOR_X_2(Bin1[r], Bin2[r])
 
 	DECL_SMASK2REG
@@ -800,11 +797,6 @@ static uint32_t blockmix_xor(const salsa20_blk_t *restrict Bin1,
 	i = 0;
 	r--;
 	do {
-#ifdef PREFETCH
-		PREFETCH(&Bout[i+1], _MM_HINT_T0)
-		PREFETCH(&Bin2[i+1], _MM_HINT_T0)
-		PREFETCH(&Bin1[i+1], _MM_HINT_T0)
-#endif
 		XOR_X(Bin1[i])
 		XOR_X(Bin2[i])
 		PWXFORM
