@@ -99,11 +99,11 @@
 #include <xmmintrin.h>
 #elif defined(__ARM_NEON)
 #include "sse2neon.h"
-#define __AVX__
-#define __SSE__
-#define __SSE2__
+//#define __AVX__
+//#define __SSE__
+//#define __SSE2__
 #define __SSE_2_NEON_
-#define __XOP__ // actually slower.. 
+//#define __XOP__ // actually slower.. 
 #define _MM_HINT_T0 1
 #endif
 
@@ -733,8 +733,10 @@ static void blockmix(const salsa20_blk_t *restrict Bin,
 	r = r * 2 - 1;
 #ifdef PREFETCH
 	PREFETCH(&Bin[r], _MM_HINT_T0)
+	PREFETCH(&Bout[r], _MM_HINT_T0)
 		for (i = 0; i < r; i++) {
 			PREFETCH(&Bin[i], _MM_HINT_T0)
+			PREFETCH(&Bout[i], _MM_HINT_T0)
 		}
 #endif
 
@@ -785,7 +787,7 @@ static uint32_t blockmix_xor(const salsa20_blk_t *restrict Bin1,
 	for (i = 0; i < r; i++) {
 		PREFETCH(&Bin2[i], _MM_HINT_T0)
 		PREFETCH(&Bin1[i], _MM_HINT_T0)
-		PREFETCH(&Bout[r], _MM_HINT_T0)
+		PREFETCH(&Bout[i], _MM_HINT_T0)
 	}
 #endif
 
@@ -845,7 +847,7 @@ static uint32_t blockmix_xor_save(salsa20_blk_t *restrict Bin1out,
 		PREFETCH(&Bin2[r], _MM_HINT_T0)
 	for (i = 0; i < r; i++) {
 		PREFETCH(&Bin2[i], _MM_HINT_T0)
-		PREFETCH(&Bin1out[r], _MM_HINT_T0)
+		PREFETCH(&Bin1out[i], _MM_HINT_T0)
 	}
 #endif
 
