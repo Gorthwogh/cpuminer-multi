@@ -779,10 +779,13 @@ static uint32_t blockmix_xor(const salsa20_blk_t *restrict Bin1,
 	r = r * 2 - 1;
 
 #ifdef PREFETCH
+	PREFETCH(&Bin1[r], _MM_HINT_T0)
 	PREFETCH(&Bin2[r], _MM_HINT_T0)
+	PREFETCH(&Bout[r], _MM_HINT_T0)
 	for (i = 0; i < r; i++) {
 		PREFETCH(&Bin2[i], _MM_HINT_T0)
 		PREFETCH(&Bin1[i], _MM_HINT_T0)
+		PREFETCH(&Bout[r], _MM_HINT_T0)
 	}
 #endif
 
@@ -838,9 +841,11 @@ static uint32_t blockmix_xor_save(salsa20_blk_t *restrict Bin1out,
 	r = r * 2 - 1;
 
 #ifdef PREFETCH
-	PREFETCH(&Bin2[r], _MM_HINT_T0)
+		PREFETCH(&Bin1out[r], _MM_HINT_T0)
+		PREFETCH(&Bin2[r], _MM_HINT_T0)
 	for (i = 0; i < r; i++) {
 		PREFETCH(&Bin2[i], _MM_HINT_T0)
+		PREFETCH(&Bin1out[r], _MM_HINT_T0)
 	}
 #endif
 
