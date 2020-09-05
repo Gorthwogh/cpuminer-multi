@@ -45,9 +45,14 @@
 #ifndef _YESPOWER_OPT_C_PASS_
 #define _YESPOWER_OPT_C_PASS_ 1
 #endif
-//#define __AVX__
-//#define __SSE2__
-//#define __SSE4_1_
+
+#ifdef __x86_64__
+
+#define __AVX__
+#define __SSE2__
+#define __SSE4_1_
+
+#endif
 //#define __ARM_NEON
 
 #if _YESPOWER_OPT_C_PASS_ == 1
