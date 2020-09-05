@@ -46,11 +46,12 @@
 #define _YESPOWER_OPT_C_PASS_ 1
 #endif
 
-#ifdef __x86_64__
+#if !defined(__ARM_NEON)
 
-#define __AVX__
-#define __SSE2__
-#define __SSE4_1_
+#define __AVX__ 1
+#define __SSE__ 1
+#define __SSE2__ 1
+#define __SSE4_1__ 1
 
 #endif
 //#define __ARM_NEON
@@ -483,7 +484,7 @@ typedef struct {
 #elif defined(__SSE_2_NEON_)
 #define HI32(X) \
 	_mm_srli_si128((X), 4)
-#elif defined(__SSE4_1_) //1 /* As an option, check for __SSE4_1__ here not to hurt Conroe */
+#elif defined(__SSE4_1__) //1 /* As an option, check for __SSE4_1__ here not to hurt Conroe */
 #define HI32(X) \
 	_mm_shuffle_epi32((X), _MM_SHUFFLE(2,3,0,1))
 #else
@@ -1019,12 +1020,10 @@ static void smix2(uint8_t *B, size_t r, uint32_t N, uint32_t Nloop,
 		} while (Nloop -= 2);
 #if _YESPOWER_OPT_C_PASS_ == 1
 	} else {
-		do {
 			const salsa20_blk_t * V_j = &V[j * s];
 			j = blockmix_xor(X, V_j, Y, r, ctx) & (N - 1);
 			V_j = &V[j * s];
-			j = blockmix_xor(Y, V_j, X, r, ctx) & (N - 1);
-		} while (Nloop -= 2);
+			blockmix_xor(Y, V_j, X, r, ctx);
 	}
 #endif
 
