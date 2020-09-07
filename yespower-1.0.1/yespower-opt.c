@@ -740,13 +740,6 @@ static void blockmix(const salsa20_blk_t *restrict Bin,
 #ifdef PREFETCH
 	PREFETCH(&Bin[r], _MM_HINT_T0)
 	PREFETCH(&Bin[0], _MM_HINT_T0)
-		PREFETCH(&Bin[1], _MM_HINT_T0)
-		PREFETCH(&Bin[2], _MM_HINT_T0)
-	//PREFETCH(&Bout[0], _MM_HINT_T0)
-		/*for (i = 0; i < r; i++) {
-			PREFETCH(&Bin[i], _MM_HINT_T0)
-			PREFETCH(&Bout[i], _MM_HINT_T0)
-		}*/
 #endif
 
 	READ_X(Bin[r])
@@ -755,7 +748,9 @@ static void blockmix(const salsa20_blk_t *restrict Bin,
 
 	i = 0;
 	do {
+#ifdef PREFETCH
 		PREFETCH(&Bin[i+1], _MM_HINT_T0)
+#endif
 		XOR_X(Bin[i])
 		PWXFORM
 		if (unlikely(i >= r))
@@ -791,19 +786,10 @@ static uint32_t blockmix_xor(const salsa20_blk_t *restrict Bin1,
 	r = r * 2 - 1;
 
 #ifdef PREFETCH
-	//PREFETCH(&Bout[0], _MM_HINT_T0)
 	PREFETCH(&Bin1[r], _MM_HINT_T0)
 	PREFETCH(&Bin2[r], _MM_HINT_T0)
 	PREFETCH(&Bin1[0], _MM_HINT_T0)
 	PREFETCH(&Bin2[0], _MM_HINT_T0)
-		PREFETCH(&Bin1[1], _MM_HINT_T0)
-		PREFETCH(&Bin2[1], _MM_HINT_T0)
-		PREFETCH(&Bin1[2], _MM_HINT_T0)
-		PREFETCH(&Bin2[2], _MM_HINT_T0)
-	/*for (i = 0; i < r; i++) {
-		PREFETCH(&Bin2[i], _MM_HINT_T0)
-		PREFETCH(&Bin1[i], _MM_HINT_T0)
-	}*/
 #endif
 
 	XOR_X_2(Bin1[r], Bin2[r])
@@ -813,14 +799,20 @@ static uint32_t blockmix_xor(const salsa20_blk_t *restrict Bin1,
 	i = 0;
 	r--;
 	do {
+#ifdef PREFETCH
 		PREFETCH(&Bin1[i + 1], _MM_HINT_T0)
 		PREFETCH(&Bin2[i + 1], _MM_HINT_T0)
+#endif
+
 		XOR_X(Bin1[i])
 		XOR_X(Bin2[i])
 		PWXFORM
 		WRITE_X(Bout[i])
+
+#ifdef PREFETCH
 		PREFETCH(&Bin1[i + 2], _MM_HINT_T0)
 		PREFETCH(&Bin2[i + 2], _MM_HINT_T0)
+#endif
 		XOR_X(Bin1[i + 1])
 		XOR_X(Bin2[i + 1])
 		PWXFORM
@@ -865,14 +857,6 @@ static uint32_t blockmix_xor_save(salsa20_blk_t *restrict Bin1out,
 		PREFETCH(&Bin2[r], _MM_HINT_T0)
 		PREFETCH(&Bin1out[0], _MM_HINT_T0)
 		PREFETCH(&Bin2[0], _MM_HINT_T0)
-			PREFETCH(&Bin1out[1], _MM_HINT_T0)
-			PREFETCH(&Bin2[1], _MM_HINT_T0)
-			PREFETCH(&Bin1out[2], _MM_HINT_T0)
-			PREFETCH(&Bin2[2], _MM_HINT_T0)
-	/*for (i = 0; i < r; i++) {
-		PREFETCH(&Bin2[i], _MM_HINT_T0)
-		PREFETCH(&Bin1out[i], _MM_HINT_T0)
-	}*/
 #endif
 
 	XOR_X_2(Bin1out[r], Bin2[r])
@@ -882,13 +866,19 @@ static uint32_t blockmix_xor_save(salsa20_blk_t *restrict Bin1out,
 	i = 0;
 	r--;
 	do {
+
+#ifdef PREFETCH
 		PREFETCH(&Bin1out[i+1], _MM_HINT_T0)
 		PREFETCH(&Bin2[i+1], _MM_HINT_T0)
+#endif
 		XOR_X_WRITE_XOR_Y_2(Bin2[i], Bin1out[i])
 		PWXFORM
 		WRITE_X(Bin1out[i])
+
+#ifdef PREFETCH
 		PREFETCH(&Bin1out[i + 2], _MM_HINT_T0)
 		PREFETCH(&Bin2[i +2], _MM_HINT_T0)
+#endif
 		XOR_X_WRITE_XOR_Y_2(Bin2[i + 1], Bin1out[i + 1])
 		PWXFORM
 
