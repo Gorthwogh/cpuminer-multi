@@ -2211,7 +2211,10 @@ static void *miner_thread(void *userdata)
 		}
 
 		max64 *= (int64_t) thr_hashrates[thr_id];
-
+		if (opt_algo == ALGO_YESPOWERR16) {
+			max64 = 499;
+		}
+		
 		if (max64 <= 0) {
 			switch (opt_algo) {
 			case ALGO_SCRYPT:
@@ -2234,6 +2237,13 @@ static void *miner_thread(void *userdata)
 				max64 = 0x1ff;
 				break;
 			case ALGO_YESPOWER:
+			case ALGO_YESPOWERR16:
+			case ALGO_CPUPOWER:
+			case ALGO_YESPOWERURX:
+			case ALGO_YESPOWERSUGAR:
+			case ALGO_YESPOWERLITB:
+			case ALGO_YESPOWERINTER:
+			case ALGO_POWER2B:
 				max64 = 499;
 				break;
 			case ALGO_ALLIUM:
