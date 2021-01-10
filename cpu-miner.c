@@ -110,6 +110,7 @@ enum algos {
 	ALGO_PENTABLAKE,  /* Pentablake */
 	ALGO_PHI1612,
 	ALGO_PHI2,
+	ALGO_PHI5,
 	ALGO_PLUCK,       /* Pluck (Supcoin) */
 	ALGO_QUBIT,       /* Qubit */
 	ALGO_RAINFOREST,  /* RainForest */
@@ -188,6 +189,7 @@ static const char *algo_names[] = {
 	"pentablake",
 	"phi1612",
 	"phi2",
+	"phi5",
 	"pluck",
 	"qubit",
 	"rainforest",
@@ -2256,6 +2258,7 @@ static void *miner_thread(void *userdata)
 			case ALGO_LYRA2V3:
 			case ALGO_PHI1612:
 			case ALGO_PHI2:
+			case ALGO_PHI5:
 			case ALGO_TIMETRAVEL:
 			case ALGO_BITCORE:
 			case ALGO_XEVAN:
@@ -2414,6 +2417,9 @@ static void *miner_thread(void *userdata)
 			break;
 		case ALGO_PHI2:
 			rc = scanhash_phi2(thr_id, &work, max_nonce, &hashes_done);
+			break;
+		case ALGO_PHI5:
+			rc = scanhash_phi5(thr_id, &work, max_nonce, &hashes_done);
 			break;
 		case ALGO_PLUCK:
 			rc = scanhash_pluck(thr_id,  &work, max_nonce, &hashes_done, scratchbuf, opt_pluck_n);
@@ -3517,7 +3523,7 @@ static int thread_create(struct thr_info *thr, void* func)
 
 static void show_credits()
 {
-	printf("** " PACKAGE_NAME " " PACKAGE_VERSION " by tpruvot@github arm extension by gorthwogh@github **\n");
+	printf("** " PACKAGE_NAME " " PACKAGE_VERSION " by tpruvot@github arm64 extension by gorthwogh@github **\n");
 	printf("BTC donation address: 1LnxwR565Va3HDc3oXienpD9C9XevjEuTb (gorthwogh)\n\n");
 	printf("BTC donation address: 1FhDPLPpw18X4srecguG3MxJYe4a1JsZnd (tpruvot)\n\n");
 }

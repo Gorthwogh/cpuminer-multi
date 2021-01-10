@@ -87,6 +87,7 @@ cpuminer_SOURCES = \
   algo/pentablake.c \
   algo/phi1612.c \
   algo/phi2.c \
+  algo/phi5.c \
   algo/quark.c \
   algo/neoscrypt.c \
   algo/nist5.c \
