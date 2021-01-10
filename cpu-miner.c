@@ -226,6 +226,7 @@ static const char *algo_names[] = {
 	"yespowersugar",
 	"yespowerlitb",
 	"yespowerinter",
+	"yespowertide",
 	"power2b",
 	"zr5",
 	"\0"
