@@ -148,6 +148,7 @@ enum algos {
 	ALGO_YESPOWERSUGAR,
 	ALGO_YESPOWERLITB,
 	ALGO_YESPOWERINTER,
+	ALGO_YESPOWERTIDE,
 	ALGO_POWER2B,
 	ALGO_ZR5,
 	ALGO_COUNT
@@ -1893,6 +1894,7 @@ static void stratum_gen_work(struct stratum_ctx *sctx, struct work *work)
 			case ALGO_YESPOWERSUGAR:
 			case ALGO_YESPOWERLITB:
 			case ALGO_YESPOWERINTER:
+			case ALGO_YESPOWERTIDE:
 			case ALGO_POWER2B:
 				work_set_target(work, sctx->job.diff / (65536.0 * opt_diff_factor));
 			break;
@@ -2243,6 +2245,7 @@ static void *miner_thread(void *userdata)
 			case ALGO_YESPOWERSUGAR:
 			case ALGO_YESPOWERLITB:
 			case ALGO_YESPOWERINTER:
+			case ALGO_YESPOWERTIDE:
 			case ALGO_POWER2B:
 				max64 = 499;
 				break;
@@ -2527,6 +2530,9 @@ static void *miner_thread(void *userdata)
 			break;
 		case ALGO_YESPOWERINTER:
 			rc = scanhash_yespower(thr_id, &work, max_nonce, &hashes_done, 6);
+			break;
+		case ALGO_YESPOWERTIDE:
+			rc = scanhash_yespower(thr_id, &work, max_nonce, &hashes_done, 8);
 			break;
 		case ALGO_POWER2B:
 			//rc = scanhash_yespower_b2b(thr_id, &work, max_nonce, &hashes_done);

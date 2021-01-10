@@ -53,6 +53,11 @@ int yespower_hash(const uint8_t *input, yespower_binary_t *output, uint32_t len,
 		static const yespower_params_t v7 = { YESPOWER_1_0, 2048, 32, "Satoshi Nakamoto 31/Oct/2008 Proof-of-work is essentially one-CPU-one-vote", 74 };
 		return yespower_tls((const uint8_t*)input, len, &v7, (yespower_binary_t*)output, thrid);
 	}
+	if (version == 8)
+	{
+		static const yespower_params_t v8 = { YESPOWER_1_0, 2048, 8, "Tidecoin: Post Quantum Security.", 32 };
+		return yespower_tls((const uint8_t*)input, len, &v8, (yespower_binary_t*)output, thrid);
+	}
 	
 	return 0;
 	//return yespower_tls(input, len, &yespower_params,
