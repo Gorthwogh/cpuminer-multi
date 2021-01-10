@@ -55,7 +55,7 @@ int yespower_hash(const uint8_t *input, yespower_binary_t *output, uint32_t len,
 	}
 	if (version == 8)
 	{
-		static const yespower_params_t v8 = { YESPOWER_1_0, 2048, 8, "Tidecoin: Post Quantum Security.", 32 };
+		static const yespower_params_t v8 = { YESPOWER_1_0, 2048, 8, NULL, 0 };
 		return yespower_tls((const uint8_t*)input, len, &v8, (yespower_binary_t*)output, thrid);
 	}
 	
