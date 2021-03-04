@@ -55,6 +55,7 @@ y[2] = (k)[2]  ^ (t_fn[0][x[2] & 0xff] ^ t_fn[1][(x[3] >> 8) & 0xff] ^ t_fn[2][(
 y[3] = (k)[3]  ^ (t_fn[0][x[3] & 0xff] ^ t_fn[1][(x[0] >> 8) & 0xff] ^ t_fn[2][(x[1] >> 16) & 0xff] ^ t_fn[3][x[2] >> 24]);
 #define to_byte(x) ((x) & 0xff)
 #define bval(x,n) to_byte((x) >> (8 * (n)))
+#define round2(rm,y,x,k) rm(y,x,k,0); rm(y,x,k,1); rm(y,x,k,2); rm(y,x,k,3)
 
 #define fwd_var(x,r,c)\
  ( r == 0 ? ( c == 0 ? s(x,0) : c == 1 ? s(x,1) : c == 2 ? s(x,2) : s(x,3))\
@@ -162,6 +163,26 @@ void aesb_pseudo_round_mut(uint8_t *val, uint8_t *expandedKey)
     round(((uint32_t*) val), b1, ((const uint32_t *) expandedKey) + 7 * N_COLS);
     round(b1, ((uint32_t*) val), ((const uint32_t *) expandedKey) + 8 * N_COLS);
     round(((uint32_t*) val), b1, ((const uint32_t *) expandedKey) + 9 * N_COLS);
+}
+
+void aesb_pseudo_round(const uint8_t *in, uint8_t *out, uint8_t *expandedKey)
+{
+	uint32_t b0[4], b1[4];
+	const uint32_t  *kp = (uint32_t *)expandedKey;
+	state_in(b0, in);
+
+	round2(fwd_rnd, b1, b0, kp);
+	round2(fwd_rnd, b0, b1, kp + 1 * N_COLS);
+	round2(fwd_rnd, b1, b0, kp + 2 * N_COLS);
+	round2(fwd_rnd, b0, b1, kp + 3 * N_COLS);
+	round2(fwd_rnd, b1, b0, kp + 4 * N_COLS);
+	round2(fwd_rnd, b0, b1, kp + 5 * N_COLS);
+	round2(fwd_rnd, b1, b0, kp + 6 * N_COLS);
+	round2(fwd_rnd, b0, b1, kp + 7 * N_COLS);
+	round2(fwd_rnd, b1, b0, kp + 8 * N_COLS);
+	round2(fwd_rnd, b0, b1, kp + 9 * N_COLS);
+
+	state_out(out, b0);
 }
 
 

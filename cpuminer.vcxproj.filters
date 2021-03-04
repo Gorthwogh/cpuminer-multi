@@ -393,6 +393,33 @@
     <ClCompile Include="algo\phi5.c">
       <Filter>algo</Filter>
     </ClCompile>
+    <ClCompile Include="gr\gr-gate.c">
+      <Filter>gr</Filter>
+    </ClCompile>
+    <ClCompile Include="gr\cryptonote\cryptonight_dark.c">
+      <Filter>gr\cryptonote</Filter>
+    </ClCompile>
+    <ClCompile Include="gr\cryptonote\cryptonight_dark_lite.c">
+      <Filter>gr\cryptonote</Filter>
+    </ClCompile>
+    <ClCompile Include="gr\cryptonote\cryptonight_fast.c">
+      <Filter>gr\cryptonote</Filter>
+    </ClCompile>
+    <ClCompile Include="gr\cryptonote\cryptonight_lite.c">
+      <Filter>gr\cryptonote</Filter>
+    </ClCompile>
+    <ClCompile Include="gr\cryptonote\cryptonight_soft_shell.c">
+      <Filter>gr\cryptonote</Filter>
+    </ClCompile>
+    <ClCompile Include="gr\cryptonote\cryptonight_turtle.c">
+      <Filter>gr\cryptonote</Filter>
+    </ClCompile>
+    <ClCompile Include="gr\cryptonote\cryptonight_turtle_lite.c">
+      <Filter>gr\cryptonote</Filter>
+    </ClCompile>
+    <ClCompile Include="gr\cryptonote\cryptonight_gr.c">
+      <Filter>gr\cryptonote</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="sha3\sph_blake.h">
@@ -623,6 +650,33 @@
     <ClInclude Include="yespower-1.0.1\sysendian.h">
       <Filter>yespower</Filter>
     </ClInclude>
+    <ClInclude Include="gr\gr-gate.h">
+      <Filter>gr</Filter>
+    </ClInclude>
+    <ClInclude Include="gr\cryptonote\cryptonight_dark.h">
+      <Filter>gr\cryptonote</Filter>
+    </ClInclude>
+    <ClInclude Include="gr\cryptonote\cryptonight_dark_lite.h">
+      <Filter>gr\cryptonote</Filter>
+    </ClInclude>
+    <ClInclude Include="gr\cryptonote\cryptonight_fast.h">
+      <Filter>gr\cryptonote</Filter>
+    </ClInclude>
+    <ClInclude Include="gr\cryptonote\cryptonight_lite.h">
+      <Filter>gr\cryptonote</Filter>
+    </ClInclude>
+    <ClInclude Include="gr\cryptonote\cryptonight_soft_shell.h">
+      <Filter>gr\cryptonote</Filter>
+    </ClInclude>
+    <ClInclude Include="gr\cryptonote\cryptonight_turtle.h">
+      <Filter>gr\cryptonote</Filter>
+    </ClInclude>
+    <ClInclude Include="gr\cryptonote\cryptonight_turtle_lite.h">
+      <Filter>gr\cryptonote</Filter>
+    </ClInclude>
+    <ClInclude Include="gr\cryptonote\cryptonight_gr.h">
+      <Filter>gr\cryptonote</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="sph">
@@ -669,6 +723,12 @@
     </Filter>
     <Filter Include="yespower2b">
       <UniqueIdentifier>{ec37805c-04d4-4d76-80ac-7222db324f51}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="gr">
+      <UniqueIdentifier>{d12d08c6-f565-43c9-ba1a-2af6e243f439}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="gr\cryptonote">
+      <UniqueIdentifier>{cf613dcb-831a-4bfc-a2fa-6aadcf3b21f7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

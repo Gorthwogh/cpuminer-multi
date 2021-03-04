@@ -188,6 +188,15 @@
       <Optimization Condition="'$(Configuration)'=='Release'">Full</Optimization>
     </ClCompile>
     <ClCompile Include="api.c" />
+    <ClCompile Include="gr\cryptonote\cryptonight_gr.c" />
+    <ClCompile Include="gr\cryptonote\cryptonight_dark.c" />
+    <ClCompile Include="gr\cryptonote\cryptonight_dark_lite.c" />
+    <ClCompile Include="gr\cryptonote\cryptonight_fast.c" />
+    <ClCompile Include="gr\cryptonote\cryptonight_lite.c" />
+    <ClCompile Include="gr\cryptonote\cryptonight_soft_shell.c" />
+    <ClCompile Include="gr\cryptonote\cryptonight_turtle.c" />
+    <ClCompile Include="gr\cryptonote\cryptonight_turtle_lite.c" />
+    <ClCompile Include="gr\gr-gate.c" />
     <ClCompile Include="sha3\hmac-sha256-hash.c" />
     <ClCompile Include="sysinfos.c" />
     <ClCompile Include="crypto\aesb.c" />
@@ -330,6 +339,15 @@
     <ClInclude Include="crypto\int-util.h" />
     <ClInclude Include="crypto\oaes_lib.h" />
     <ClInclude Include="elist.h" />
+    <ClInclude Include="gr\cryptonote\cryptonight_gr.h" />
+    <ClInclude Include="gr\cryptonote\cryptonight_dark.h" />
+    <ClInclude Include="gr\cryptonote\cryptonight_dark_lite.h" />
+    <ClInclude Include="gr\cryptonote\cryptonight_fast.h" />
+    <ClInclude Include="gr\cryptonote\cryptonight_lite.h" />
+    <ClInclude Include="gr\cryptonote\cryptonight_soft_shell.h" />
+    <ClInclude Include="gr\cryptonote\cryptonight_turtle.h" />
+    <ClInclude Include="gr\cryptonote\cryptonight_turtle_lite.h" />
+    <ClInclude Include="gr\gr-gate.h" />
     <ClInclude Include="lyra2\Lyra2.h" />
     <ClInclude Include="lyra2\Sponge.h" />
     <ClInclude Include="miner.h" />
